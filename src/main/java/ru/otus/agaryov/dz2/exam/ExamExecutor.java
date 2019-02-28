@@ -1,6 +1,8 @@
 package ru.otus.agaryov.dz2.exam;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.otus.agaryov.dz2.csvfilereader.CsvFileReader;
 import ru.otus.agaryov.dz2.results.ResultChecker;
 
@@ -9,11 +11,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import static java.lang.System.out;
-
+@Service
 public class ExamExecutor {
     private CsvFileReader csvFile;
     private ResultChecker checker;
 
+    @Autowired
     public ExamExecutor(CsvFileReader csvFileReader, ResultChecker resultChecker) {
         this.csvFile = csvFileReader;
         this.checker = resultChecker;

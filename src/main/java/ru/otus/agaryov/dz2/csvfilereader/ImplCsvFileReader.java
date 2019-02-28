@@ -4,7 +4,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import com.opencsv.CSVReader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ImplCsvFileReader implements CsvFileReader {
 
     // Config File with questions
@@ -12,7 +17,8 @@ public class ImplCsvFileReader implements CsvFileReader {
     // Counter of strings that have been read
     private Integer readStrCounter;
 
-    public ImplCsvFileReader(String fileName) {
+    @Autowired
+    public ImplCsvFileReader(@Value("${config.csvfile:QuestionsAndAnswers.csv}") String fileName) {
         this.readStrCounter = 0;
         this.csvFile = fileName;
     }

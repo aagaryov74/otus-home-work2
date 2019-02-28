@@ -1,10 +1,11 @@
 package ru.otus.agaryov.dz2.csvfilereader;
 
 
-import javafx.util.Pair;
 import org.junit.jupiter.api.Test;
 
 import org.mockito.Mockito;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 import ru.otus.agaryov.dz2.results.ImplResultChecker;
 import ru.otus.agaryov.dz2.results.ResultChecker;
 
@@ -13,7 +14,7 @@ import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-
+@TestPropertySource("test.properties")
 class dz2Test {
 
     @Test

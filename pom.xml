@@ -31,6 +31,14 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>LATEST</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -49,6 +57,7 @@
             <artifactId>opencsv</artifactId>
             <version>LATEST</version>
         </dependency>
+
     </dependencies>
     <build>
         <!--

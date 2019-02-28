@@ -1,6 +1,9 @@
 package ru.otus.agaryov.dz2;
 
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import ru.otus.agaryov.dz2.csvfilereader.CsvFileReader;
 import ru.otus.agaryov.dz2.exam.ExamExecutor;
 import ru.otus.agaryov.dz2.results.ImplResultChecker;
@@ -10,11 +13,18 @@ import java.io.IOException;
 
 
 import static java.lang.System.*;
-
+@Configuration
+@PropertySource("application.properties")
+@ComponentScan
 public class Main {
-    public static void main(String[] args) {
 
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("/spring-context.xml");
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
+
+    public static void main(String[] args) {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Main.class);
         CsvFileReader csvFile = context.getBean(CsvFileReader.class);
         ResultChecker checker = context.getBean(ImplResultChecker.class);
         ExamExecutor executor = context.getBean(ExamExecutor.class);
@@ -22,6 +32,7 @@ public class Main {
             try {
                 executor.doExam();
             } catch (IOException e) {
+                err.println("IO error:");
                 e.printStackTrace();
             }
         } else {
