@@ -12,15 +12,6 @@ import ru.otus.agaryov.dz2.utils.AsciiChecker;
 @Configuration
 @TestPropertySource(locations = "/test.properties")
 public class Config {
-    @Bean
-    AsciiChecker asciiChecker() {
-        return new AsciiChecker();
-    }
-
-    @Bean
-    CsvFileReader fileReader() {
-        return new ImplCsvFileReader("QuestionsAndAnswers.csv");
-    }
 
     @Bean
     public MessageSource messageSource() {

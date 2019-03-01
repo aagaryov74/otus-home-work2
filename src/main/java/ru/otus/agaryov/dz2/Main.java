@@ -42,17 +42,6 @@ public class Main {
         ResultChecker checker = context.getBean(ImplResultChecker.class);
         ExamExecutor executor = context.getBean(ExamExecutor.class);
         AsciiChecker asciiChecker = context.getBean(AsciiChecker.class);
-        if (csvFile.getReadedStrsCount() > 0) {
-            try {
-                executor.doExam();
-            } catch (IOException e) {
-                err.println("IO error:");
-                e.printStackTrace();
-            }
-        } else {
-            out.println("Sorry but you cannot continue due errors with config file");
-        }
-
-
+        executor.doExam();
     }
 }
