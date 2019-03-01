@@ -6,9 +6,11 @@ import ru.otus.agaryov.dz2.csvfilereader.CsvFileReader;
 
 import java.util.LinkedHashMap;
 @Component
+
 public class ImplResultChecker implements ResultChecker {
     private Integer result;
     private LinkedHashMap<String, String> qaMap;
+
     @Autowired
     public ImplResultChecker(CsvFileReader csvFileReader){
         this.result = 0;
@@ -32,5 +34,10 @@ public class ImplResultChecker implements ResultChecker {
     @Override
     public Integer getResult() {
         return this.result;
+    }
+
+    @Override
+    public void reloadMap(LinkedHashMap<String, String> aMap) {
+        this.qaMap = aMap;
     }
 }

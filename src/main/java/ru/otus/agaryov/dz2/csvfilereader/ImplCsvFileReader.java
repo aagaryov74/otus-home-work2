@@ -6,14 +6,13 @@ import java.util.LinkedHashMap;
 import com.opencsv.CSVReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ImplCsvFileReader implements CsvFileReader {
 
     // Config File with questions
-    private final String csvFile;
+    private  String csvFile;
     // Counter of strings that have been read
     private Integer readStrCounter;
 
@@ -26,6 +25,7 @@ public class ImplCsvFileReader implements CsvFileReader {
     @Override
     public LinkedHashMap<String,String> readCsvIntoMap() {
         CSVReader reader;
+        this.readStrCounter=0;
         LinkedHashMap<String,String> qaMap = new LinkedHashMap<>();
         try {
             reader = new CSVReader(new FileReader(this.csvFile));
@@ -40,6 +40,12 @@ public class ImplCsvFileReader implements CsvFileReader {
 
         }
         return qaMap;
+    }
+
+    @Override
+    public LinkedHashMap<String,String> readAnotherFile(String fileName) {
+        this.csvFile = fileName;
+        return readCsvIntoMap();
     }
 
     @Override

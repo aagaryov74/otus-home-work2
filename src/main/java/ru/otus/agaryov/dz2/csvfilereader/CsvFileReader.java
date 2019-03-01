@@ -7,4 +7,6 @@ public interface CsvFileReader {
     LinkedHashMap<String, String > readCsvIntoMap();
     // How many correct strings are in config file?
     Integer getReadedStrsCount();
+    // change file if we need to change locale in runtime;
+    LinkedHashMap<String,String> readAnotherFile(String fileName);
 }
