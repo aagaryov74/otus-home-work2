@@ -1,68 +1,96 @@
 package ru.otus.agaryov.dz2.csvfilereader;
 
 
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.MessageSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.otus.agaryov.dz2.Main;
+import org.springframework.test.context.junit4.SpringRunner;
 import ru.otus.agaryov.dz2.results.ImplResultChecker;
 import ru.otus.agaryov.dz2.results.ResultChecker;
+import ru.otus.agaryov.dz2.utils.AsciiChecker;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@ContextConfiguration
-@TestPropertySource("test.properties")
-class dz2Test {
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = Config.class)
+@TestPropertySource(locations = "/test.properties")
+public class dz2Test {
 
-    //@Value("#{${questions}}")
+    @Autowired
+    Config config;
+
+    @Autowired
+    AsciiChecker asciiChecker;
+
+    @Autowired
+    MessageSource ms;
+
+    @Autowired
+    CsvFileReader reader;
+
+    @Value("#{${questions}}")
     private LinkedHashMap<String,String> cMap;
 
     @Value("${question.one}")
     private String q1;
 
+
+
     @Test
-    void checkAnswers() {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(dz2Test.class);
+    public void checkAnswers() {
+
+        Locale ruLocale = new Locale.Builder().setLanguage("ru").setRegion("RU").build();
+
         CsvFileReader reader = mock(CsvFileReader.class);
 
         // Не написали еще чтение из файла в мапу, но уже хотим проверить, как ответопроверятель работает
         when(reader.readCsvIntoMap()).thenReturn(cMap);
-        System.out.println("q1 = " + q1);
+
         // Ответопроверятель
         ResultChecker resChecker = new ImplResultChecker(reader);
         // Прокладка
         ResultChecker sChecker = Mockito.spy(resChecker);
 
-        sChecker.checkAnswer("Сколько ног у Мальвины", "2");
-        sChecker.checkAnswer("Сколько месяцев в году", "12");
-        sChecker.checkAnswer("Сколько месяцев в году", "1");
-        sChecker.checkAnswer("Сколько колес у Машины", "1");
+        sChecker.checkAnswer(q1, "4");
+        sChecker.checkAnswer(ms.getMessage("question.one",null,ruLocale), "4");
+        sChecker.checkAnswer(ms.getMessage("question.two",null,Locale.ENGLISH), "4");
+        sChecker.checkAnswer(ms.getMessage("question.three",null,ruLocale), "12");
 
         int res = sChecker.getResult();
-        assertEquals(2,res, "Right answers must be 2!");
+        Assert.assertEquals(2,res);
 
         verify(sChecker, times(1)).
-                checkAnswer("Сколько ног у Мальвины", "2");
+                checkAnswer("How many legs does elephant have", "4");
 
         verify(sChecker, never()).
                 checkAnswer("Сколько деревьев в саду", "21");
 
         int qCount = sChecker.getQuestions().length;
 
-        assertEquals(4,qCount,"Questions count must be 4!");
+        Assert.assertEquals(3,qCount);
 
+    }
+
+    @Test
+    public void checkAsciiChecker() {
+        System.out.println("Ascii Checker test");
+        Assert.assertFalse(asciiChecker.isASCII("Кириллица"));
+    }
+
+
+    @Test
+    public void checkFileReader() {
+        LinkedHashMap<String,String> chMap = reader.readCsvIntoMap();
+        Assert.assertEquals(chMap.size(),5);
     }
 }
