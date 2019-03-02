@@ -41,10 +41,7 @@ public class Main {
 
     public static void main(String[] args) {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Main.class);
-        CsvFileReader csvFile = context.getBean(CsvFileReader.class);
-        ResultChecker checker = context.getBean(ImplResultChecker.class);
         ExamExecutor executor = context.getBean(ExamExecutor.class);
-        AsciiCheckerService asciiCheckerService = context.getBean(AsciiCheckerService.class);
         executor.doExam();
     }
 }
