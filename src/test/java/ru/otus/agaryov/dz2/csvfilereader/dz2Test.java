@@ -1,54 +1,101 @@
 package ru.otus.agaryov.dz2.csvfilereader;
 
 
-import javafx.util.Pair;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 import ru.otus.agaryov.dz2.results.ImplResultChecker;
 import ru.otus.agaryov.dz2.results.ResultChecker;
+import ru.otus.agaryov.dz2.service.AsciiCheckerService;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = Config.class)
+@TestPropertySource(locations = "/test.properties")
+public class dz2Test {
 
-class dz2Test {
+    @Autowired
+    Config config;
+
+    @Autowired
+    @Qualifier("testAsciiChecker")
+    AsciiCheckerService asciiCheckerService;
+
+    @Autowired
+    @Qualifier("testMessageSource")
+    MessageSource ms;
+
+    @Autowired
+    @Qualifier("testFileReader")
+    CsvFileReader reader;
+
+    @Value("#{${questions}}")
+    private LinkedHashMap<String,String> cMap;
+
+    @Value("${question.one}")
+    private String q1;
+
+
 
     @Test
-    void checkAnswers() {
-        CsvFileReader reader = mock(CsvFileReader.class);
-        LinkedHashMap<String,String> cMap = new LinkedHashMap<>();
-        // Не написали еще чтение из файла в мапу, но уже хотим проверить, как ответопроверятель работает
-        cMap.put("Сколько колес у Машины","2");
-        cMap.put("Сколько ног у Мальвины","2");
-        cMap.put("Сколько месяцев в году","12");
-        cMap.put("Сколько деревьев в саду","21");
+    public void checkAnswers() {
 
+        Locale ruLocale = new Locale.Builder().setLanguage("ru").setRegion("RU").build();
+
+        CsvFileReader reader = mock(CsvFileReader.class);
+
+        // Не написали еще чтение из файла в мапу, но уже хотим проверить, как ответопроверятель работает
         when(reader.readCsvIntoMap()).thenReturn(cMap);
+
         // Ответопроверятель
         ResultChecker resChecker = new ImplResultChecker(reader);
         // Прокладка
         ResultChecker sChecker = Mockito.spy(resChecker);
 
-        sChecker.checkAnswer("Сколько ног у Мальвины", "2");
-        sChecker.checkAnswer("Сколько месяцев в году", "12");
-        sChecker.checkAnswer("Сколько месяцев в году", "1");
-        sChecker.checkAnswer("Сколько колес у Машины", "1");
+        sChecker.checkAnswer(q1, "4");
+        sChecker.checkAnswer(ms.getMessage("question.one",null,ruLocale), "4");
+        sChecker.checkAnswer(ms.getMessage("question.two",null,Locale.ENGLISH), "4");
+        sChecker.checkAnswer(ms.getMessage("question.three",null,ruLocale), "12");
 
         int res = sChecker.getResult();
-        assertEquals(2,res, "Right answers must be 2!");
+        Assert.assertEquals(2,res);
 
         verify(sChecker, times(1)).
-                checkAnswer("Сколько ног у Мальвины", "2");
+                checkAnswer("How many legs does elephant have", "4");
 
         verify(sChecker, never()).
                 checkAnswer("Сколько деревьев в саду", "21");
 
         int qCount = sChecker.getQuestions().length;
 
-        assertEquals(4,qCount,"Questions count must be 4!");
+        Assert.assertEquals(3,qCount);
 
+    }
+
+    @Test
+    public void checkAsciiChecker() {
+        System.out.println("Ascii Checker test");
+        Assert.assertFalse(asciiCheckerService.isASCII("Кириллица"));
+    }
+
+
+    @Test
+    public void checkFileReader() {
+        Map<String,String> chMap = reader.readCsvIntoMap();
+        Assert.assertEquals(chMap.size(),5);
     }
 }

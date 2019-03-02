@@ -1,14 +1,19 @@
 package ru.otus.agaryov.dz2.results;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import ru.otus.agaryov.dz2.csvfilereader.CsvFileReader;
 
-import java.util.LinkedHashMap;
+import java.util.Map;
 
+@Component
 public class ImplResultChecker implements ResultChecker {
     private Integer result;
-    private LinkedHashMap<String, String> qaMap;
+    private Map<String, String> qaMap;
 
-    public ImplResultChecker(CsvFileReader csvFileReader){
+    @Autowired
+    public ImplResultChecker(@Qualifier("implCsvFileReader") CsvFileReader csvFileReader){
         this.result = 0;
         if (csvFileReader != null) this.qaMap = csvFileReader.readCsvIntoMap();
     }
@@ -30,5 +35,10 @@ public class ImplResultChecker implements ResultChecker {
     @Override
     public Integer getResult() {
         return this.result;
+    }
+
+    @Override
+    public void setMap(Map<String, String> aMap) {
+        this.qaMap = aMap;
     }
 }
