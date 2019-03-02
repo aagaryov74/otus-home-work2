@@ -14,16 +14,13 @@ import static java.lang.System.out;
 @Service
 public class ImplIOService implements  IOService {
     private MessageSource messageSource;
-    private MessageSource appMessageSource;
     private Locale locale;
     private BufferedReader bufferedReader;
     private AsciiCheckerService asciiCheckerService;
 
     public ImplIOService(@Qualifier("messageSource") MessageSource messageSource,
-                         @Qualifier("appSource") MessageSource appMessageSource,
                          AsciiCheckerService asciiCheckerService) {
         this.messageSource = messageSource;
-        this.appMessageSource = appMessageSource;
         this.asciiCheckerService = asciiCheckerService;
         bufferedReader = new BufferedReader(new InputStreamReader(System.in));
         locale = Locale.getDefault();
@@ -46,25 +43,25 @@ public class ImplIOService implements  IOService {
         return messageSource.getMessage(propertyParam,null,locale);
     }
 
-    public String getApplicatonMessages(String propertyParam) {
-        return appMessageSource.getMessage(propertyParam,null,locale);
+    public String getLocaleLang() {
+        return locale.getLanguage();
     }
 
-    public Boolean checkAndSwitchLocale(String inputString) {
-        boolean isLocaleChanged = false;
+    public String checkAndSwitchLocale(String inputString) {
+        String localeLanguage = locale.getLanguage();
         if (asciiCheckerService.isASCII(inputString)) {
             // inpStr is in ASCII but if locale is in ru_RU we need to change language to english
             if (locale.getLanguage().contentEquals("ru")) {
                 locale = new Locale.Builder().setLanguage("en").setRegion("US").build();
-                isLocaleChanged = true;
+                return locale.getLanguage();
             }
         } else {
             // inpStr is not in ASCII so if locale is in en_EN we need to change language to russian
             if (locale.getLanguage().contentEquals("en")) {
                 locale = new Locale.Builder().setLanguage("ru").setRegion("RU").build();
-                isLocaleChanged = true;
+                return locale.getLanguage();
             }
         }
-        return isLocaleChanged;
+        return localeLanguage;
     }
 }

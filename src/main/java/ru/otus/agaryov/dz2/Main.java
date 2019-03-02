@@ -22,15 +22,6 @@ public class Main {
     }
 
     @Bean
-    public MessageSource appSource() {
-        ReloadableResourceBundleMessageSource ms
-                = new ReloadableResourceBundleMessageSource();
-        ms.setBasename("application");
-        ms.setDefaultEncoding("UTF-8");
-        return ms;
-    }
-
-    @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource ms
                 = new ReloadableResourceBundleMessageSource();

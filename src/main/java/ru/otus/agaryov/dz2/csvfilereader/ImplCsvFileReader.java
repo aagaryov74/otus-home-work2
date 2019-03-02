@@ -19,7 +19,7 @@ public class ImplCsvFileReader implements CsvFileReader {
     private Integer readStrCounter;
 
     @Autowired
-    public ImplCsvFileReader(@Value("${config.csvfile:QuestionsAndAnswers.csv}") String fileName) {
+    public ImplCsvFileReader(@Value("${config.csvfile}_#{T(java.util.Locale).getDefault().getLanguage()}.csv") String fileName) {
         this.readStrCounter = 0;
         this.csvFile = fileName;
     }
@@ -38,8 +38,8 @@ public class ImplCsvFileReader implements CsvFileReader {
             }
         } catch (IOException | ArrayIndexOutOfBoundsException e) {
             System.err.println("Error at reading config file  " + csvFile + ": "
-                    + e.toString());
-
+                    + e.getMessage());
+            return null;
         }
         return qaMap;
     }

@@ -3,6 +3,7 @@ package ru.otus.agaryov.dz2.exam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.otus.agaryov.dz2.csvfilereader.CsvFileReader;
 import ru.otus.agaryov.dz2.results.ResultChecker;
@@ -18,6 +19,8 @@ public class ExamExecutor {
     private AsciiCheckerService asciiCheckerService;
     private IOService ioService;
 
+    @Value("${config.csvfile}")
+    private String csvFilePrefix;
 
     @Autowired
     public ExamExecutor(@Qualifier("implCsvFileReader") CsvFileReader csvFileReader,
@@ -29,23 +32,31 @@ public class ExamExecutor {
     }
 
     public void doExam() {
-
-
         try {
-            ioService.printToConsole("enterFio");
-            String studentFIO = ioService.readFromConsole();
-            if (ioService.checkAndSwitchLocale(studentFIO))
-                checker.setMap(csvFile.setCsvFile(ioService.getApplicatonMessages("config.csvfile")));
-            ioService.printFToConsole("welcome",
-                    studentFIO, csvFile.getReadedStrsCount());
-            for (int i = 0; i < checker.getQuestions().length; i++) {
-                String question = checker.getQuestions()[i].toString();
-                ioService.printFToConsole("question",
-                        i + 1, question);
-                String input = ioService.readFromConsole();
-                checker.checkAnswer(question, input);
+            if (checker.getQuestions() != null) {
+                String consoleLanguage = ioService.getLocaleLang();
+                ioService.printToConsole("enterFio");
+                String studentFIO = ioService.readFromConsole();
+                String studentFIOLanguage = ioService.checkAndSwitchLocale(studentFIO);
+                if (!consoleLanguage.equalsIgnoreCase(studentFIOLanguage)) {
+                    checker.setMap(csvFile.setCsvFile((csvFilePrefix +
+                            "_" + studentFIOLanguage + ".csv")));
+                    if (checker.getQuestions() == null) throw new IOException();
+                }
+                ioService.printFToConsole("welcome",
+                        studentFIO, csvFile.getReadedStrsCount());
+
+                for (int i = 0; i < checker.getQuestions().length; i++) {
+                    String question = checker.getQuestions()[i].toString();
+                    ioService.printFToConsole("question",
+                            i + 1, question);
+                    String input = ioService.readFromConsole();
+                    checker.checkAnswer(question, input);
+                }
+                ioService.printFToConsole("results", checker.getResult());
+            } else {
+                throw new IOException();
             }
-            ioService.printFToConsole("results", checker.getResult());
         } catch (IOException e) {
             ioService.printToConsole("iowarning");
         }
