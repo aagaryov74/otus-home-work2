@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.test.context.ContextConfiguration;
@@ -18,6 +19,7 @@ import ru.otus.agaryov.dz2.utils.AsciiChecker;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
@@ -30,12 +32,15 @@ public class dz2Test {
     Config config;
 
     @Autowired
+    @Qualifier("testAsciiChecker")
     AsciiChecker asciiChecker;
 
     @Autowired
+    @Qualifier("testMessageSource")
     MessageSource ms;
 
     @Autowired
+    @Qualifier("testFileReader")
     CsvFileReader reader;
 
     @Value("#{${questions}}")
@@ -90,7 +95,7 @@ public class dz2Test {
 
     @Test
     public void checkFileReader() {
-        LinkedHashMap<String,String> chMap = reader.readCsvIntoMap();
+        Map<String,String> chMap = reader.readCsvIntoMap();
         Assert.assertEquals(chMap.size(),5);
     }
 }

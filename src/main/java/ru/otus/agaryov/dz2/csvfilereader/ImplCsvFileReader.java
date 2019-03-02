@@ -3,8 +3,11 @@ package ru.otus.agaryov.dz2.csvfilereader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.opencsv.CSVReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,10 +26,10 @@ public class ImplCsvFileReader implements CsvFileReader {
     }
 
     @Override
-    public LinkedHashMap<String,String> readCsvIntoMap() {
+    public Map<String,String> readCsvIntoMap() {
         CSVReader reader;
         this.readStrCounter=0;
-        LinkedHashMap<String,String> qaMap = new LinkedHashMap<>();
+        Map<String,String> qaMap = new LinkedHashMap<>();
         try {
             reader = new CSVReader(new FileReader(this.csvFile));
             String[] line;
@@ -43,7 +46,7 @@ public class ImplCsvFileReader implements CsvFileReader {
     }
 
     @Override
-    public LinkedHashMap<String,String> readAnotherFile(String fileName) {
+    public Map<String,String> readAnotherFile(String fileName) {
         this.csvFile = fileName;
         return readCsvIntoMap();
     }

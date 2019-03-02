@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 import static java.lang.System.*;
 @Configuration
 @PropertySource("application.properties")
-@ComponentScan
+@ComponentScan("ru.otus.agaryov.dz2")
 public class Main {
 
     @Bean

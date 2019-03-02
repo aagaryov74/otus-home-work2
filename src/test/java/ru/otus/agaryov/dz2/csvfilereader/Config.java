@@ -1,6 +1,7 @@
 package ru.otus.agaryov.dz2.csvfilereader;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +15,17 @@ import ru.otus.agaryov.dz2.utils.AsciiChecker;
 public class Config {
 
     @Bean
-    public MessageSource messageSource() {
+    AsciiChecker testAsciiChecker() {
+        return new AsciiChecker();
+    }
+
+    @Bean
+    CsvFileReader testFileReader() {
+        return new ImplCsvFileReader("QuestionsAndAnswers.csv");
+    }
+
+    @Bean
+    public MessageSource testMessageSource() {
         ReloadableResourceBundleMessageSource ms
                 = new ReloadableResourceBundleMessageSource();
         ms.setBasename("test");

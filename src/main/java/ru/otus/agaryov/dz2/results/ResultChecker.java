@@ -1,6 +1,7 @@
 package ru.otus.agaryov.dz2.results;
 
-import java.util.LinkedHashMap;
+
+import java.util.Map;
 
 public interface ResultChecker {
     // Check an answer to a question
@@ -9,6 +10,6 @@ public interface ResultChecker {
     Object[] getQuestions();
     // get right answers counter
     Integer getResult();
-
-    void reloadMap(LinkedHashMap<String, String> aMap);
+    // reload map if we need to change config file with questions at runtime
+    void reloadMap(Map<String, String> aMap);
 }
