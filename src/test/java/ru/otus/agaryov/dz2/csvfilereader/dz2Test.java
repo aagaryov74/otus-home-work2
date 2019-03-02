@@ -15,7 +15,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.otus.agaryov.dz2.results.ImplResultChecker;
 import ru.otus.agaryov.dz2.results.ResultChecker;
-import ru.otus.agaryov.dz2.utils.AsciiChecker;
+import ru.otus.agaryov.dz2.service.AsciiCheckerService;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -33,7 +33,7 @@ public class dz2Test {
 
     @Autowired
     @Qualifier("testAsciiChecker")
-    AsciiChecker asciiChecker;
+    AsciiCheckerService asciiCheckerService;
 
     @Autowired
     @Qualifier("testMessageSource")
@@ -89,7 +89,7 @@ public class dz2Test {
     @Test
     public void checkAsciiChecker() {
         System.out.println("Ascii Checker test");
-        Assert.assertFalse(asciiChecker.isASCII("Кириллица"));
+        Assert.assertFalse(asciiCheckerService.isASCII("Кириллица"));
     }
 
 

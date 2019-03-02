@@ -7,7 +7,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import ru.otus.agaryov.dz2.csvfilereader.CsvFileReader;
 import ru.otus.agaryov.dz2.results.ResultChecker;
-import ru.otus.agaryov.dz2.utils.AsciiChecker;
+import ru.otus.agaryov.dz2.service.AsciiCheckerService;
+import ru.otus.agaryov.dz2.service.IOService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,52 +20,39 @@ import static java.lang.System.out;
 public class ExamExecutor {
     private CsvFileReader csvFile;
     private ResultChecker checker;
-    private AsciiChecker asciiChecker;
-    private MessageSource ms;
+    private AsciiCheckerService asciiCheckerService;
+    private IOService ioServ;
 
 
     @Autowired
     public ExamExecutor(@Qualifier("implCsvFileReader") CsvFileReader csvFileReader,
                         ResultChecker resultChecker,
-                        AsciiChecker asciiChecker,
-                        @Qualifier("messageSource") MessageSource ms) {
+                        IOService ioServ) {
         this.csvFile = csvFileReader;
         this.checker = resultChecker;
-        this.asciiChecker = asciiChecker;
-        this.ms = ms;
+        this.ioServ = ioServ;
     }
 
     public void doExam() {
 
-        Locale currentLocale = Locale.getDefault();
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
         try {
-            out.println(ms.getMessage("enterFio", null, currentLocale));
-            String studentFIO = br.readLine();
-            if (asciiChecker.isASCII(studentFIO)) {
-                // fio is in ASCII but if locale is in ru_RU we need to change language to english
-                if (currentLocale.getLanguage().contentEquals("ru")) {
-                    currentLocale = new Locale.Builder().setLanguage("en").setRegion("US").build();
-                    checker.setMap(csvFile.setCsvFile(ms.getMessage("config.csvfile", null, currentLocale)));
-                }
-            } else {
-                // fio is not in ASCII so if locale is in en_EN we need to change language to russian
-                if (currentLocale.getLanguage().contentEquals("en")) {
-                    currentLocale = new Locale.Builder().setLanguage("ru").setRegion("RU").build();
-                    checker.setMap(csvFile.setCsvFile(ms.getMessage("config.csvfile", null, currentLocale)));
-                }
-            }
-            out.printf(ms.getMessage("welcome", null, currentLocale),
+            ioServ.outCons("enterFio");
+            String studentFIO = ioServ.rCons();
+            if (ioServ.checkAndSwitchLocale(studentFIO))
+                checker.setMap(csvFile.setCsvFile(ioServ.getMess("config.csvfile")));
+            ioServ.outFCons("welcome",
                     studentFIO, csvFile.getReadedStrsCount());
             for (int i = 0; i < checker.getQuestions().length; i++) {
                 String question = checker.getQuestions()[i].toString();
-                out.printf(ms.getMessage("question", null, currentLocale), i + 1, question);
-                String input = br.readLine();
+                ioServ.outFCons("question",
+                        i + 1, question);
+                String input = ioServ.rCons();
                 checker.checkAnswer(question, input);
             }
-            out.printf(ms.getMessage("results", null, currentLocale), checker.getResult());
+            ioServ.outFCons("results", checker.getResult());
         } catch (IOException e) {
-            out.println(ms.getMessage("iowarning",null,currentLocale));
+            ioServ.outCons("iowarning");
         }
     }
 }

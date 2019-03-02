@@ -1,9 +1,9 @@
-package ru.otus.agaryov.dz2.utils;
+package ru.otus.agaryov.dz2.service;
 
 import org.springframework.stereotype.Service;
 
 @Service
-public class AsciiChecker {
+public class AsciiCheckerService {
 
         // to check if a string only contains US-ASCII code point
         public boolean isASCII(String checkStr) {
