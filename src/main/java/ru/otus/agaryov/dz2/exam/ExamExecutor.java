@@ -25,10 +25,12 @@ public class ExamExecutor {
     @Autowired
     public ExamExecutor(@Qualifier("implCsvFileReader") CsvFileReader csvFileReader,
                         ResultChecker resultChecker,
-                        IOService ioService) {
+                        IOService ioService,
+                        AsciiCheckerService asciiCheckerService) {
         this.csvFile = csvFileReader;
         this.checker = resultChecker;
         this.ioService = ioService;
+        this.asciiCheckerService = asciiCheckerService;
     }
 
     public void doExam() {
@@ -37,11 +39,18 @@ public class ExamExecutor {
                 String consoleLanguage = ioService.getLocaleLang();
                 ioService.printToConsole("enterFio");
                 String studentFIO = ioService.readFromConsole();
-                String studentFIOLanguage = ioService.checkAndSwitchLocale(studentFIO);
-                if (!consoleLanguage.equalsIgnoreCase(studentFIOLanguage)) {
-                    checker.setMap(csvFile.setCsvFile((csvFilePrefix +
-                            "_" + studentFIOLanguage + ".csv")));
-                    if (checker.getQuestions() == null) throw new IOException();
+                if (!(consoleLanguage.equalsIgnoreCase("en")&&(asciiCheckerService.isASCII(studentFIO))
+                )) {
+                    ioService.printToConsole("doyouwanttochangelocale");
+                    String yesOrNo = ioService.readFromConsole();
+                    if (yesOrNo.trim().equalsIgnoreCase("y")) {
+                        String lang = ioService.getLanguage("enterlanguage");
+                        checker.setMap(csvFile.setCsvFile((csvFilePrefix +
+                                "_" + lang.toLowerCase() + ".csv")));
+                        ioService.setLocaleLang(lang);
+                        if (checker.getQuestions() == null) throw new IOException();
+
+                    }
                 }
                 ioService.printFToConsole("welcome",
                         studentFIO, csvFile.getReadedStrsCount());

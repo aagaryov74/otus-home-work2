@@ -7,7 +7,8 @@ public interface IOService {
     void printToConsole(String propertyParam);
     void printFToConsole(String propertyParam, Object ... args);
     String readFromConsole() throws IOException;
-    String checkAndSwitchLocale(String inputString);
     String getLocaleLang();
+    void setLocaleLang(String language);
+    String getLanguage(String prompt) throws IOException;
 
 }
