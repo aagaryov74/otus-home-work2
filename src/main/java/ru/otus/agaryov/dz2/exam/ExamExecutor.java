@@ -40,7 +40,7 @@ public class ExamExecutor {
             ioServ.outCons("enterFio");
             String studentFIO = ioServ.rCons();
             if (ioServ.checkAndSwitchLocale(studentFIO))
-                checker.setMap(csvFile.setCsvFile(ioServ.getMess("config.csvfile")));
+                checker.setMap(csvFile.setCsvFile(ioServ.getAppMess("config.csvfile")));
             ioServ.outFCons("welcome",
                     studentFIO, csvFile.getReadedStrsCount());
             for (int i = 0; i < checker.getQuestions().length; i++) {

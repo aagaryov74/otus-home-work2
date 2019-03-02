@@ -14,13 +14,16 @@ import static java.lang.System.out;
 @Service
 public class IOService {
     private MessageSource ms;
+    private MessageSource as;
     private Locale locale;
     private BufferedReader br;
     private AsciiCheckerService asciiCheckerService;
 
     public IOService(@Qualifier("messageSource") MessageSource ms,
+                     @Qualifier("appSource") MessageSource as,
                      AsciiCheckerService asciiCheckerService) {
         this.ms = ms;
+        this.as = as;
         this.asciiCheckerService = asciiCheckerService;
         br = new BufferedReader(new InputStreamReader(System.in));
         locale = Locale.getDefault();
@@ -43,8 +46,12 @@ public class IOService {
         return ms.getMessage(propParam,null,locale);
     }
 
+    public String getAppMess(String propParam) {
+        return as.getMessage(propParam,null,locale);
+    }
+
     public Boolean checkAndSwitchLocale(String inpStr) {
-        Boolean isLocaleChanged = false;
+        boolean isLocaleChanged = false;
         if (asciiCheckerService.isASCII(inpStr)) {
             // inpStr is in ASCII but if locale is in ru_RU we need to change language to english
             if (locale.getLanguage().contentEquals("ru")) {
