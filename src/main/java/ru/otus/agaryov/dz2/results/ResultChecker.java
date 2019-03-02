@@ -11,5 +11,5 @@ public interface ResultChecker {
     // get right answers counter
     Integer getResult();
     // reload map if we need to change config file with questions at runtime
-    void reloadMap(Map<String, String> aMap);
+    void setMap(Map<String, String> aMap);
 }

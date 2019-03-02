@@ -7,7 +7,6 @@ import java.util.Map;
 
 import com.opencsv.CSVReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -46,7 +45,7 @@ public class ImplCsvFileReader implements CsvFileReader {
     }
 
     @Override
-    public Map<String,String> readAnotherFile(String fileName) {
+    public Map<String,String> setCsvFile(String fileName) {
         this.csvFile = fileName;
         return readCsvIntoMap();
     }

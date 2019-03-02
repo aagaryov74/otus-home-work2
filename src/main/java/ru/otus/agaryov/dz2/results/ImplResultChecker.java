@@ -38,7 +38,7 @@ public class ImplResultChecker implements ResultChecker {
     }
 
     @Override
-    public void reloadMap(Map<String, String> aMap) {
+    public void setMap(Map<String, String> aMap) {
         this.qaMap = aMap;
     }
 }
